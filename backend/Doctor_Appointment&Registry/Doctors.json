@@ -3,6 +3,33 @@
       "name": "Dr. Manu",
       "slots": {
          "9": null,
+         "10": "3",
+         "11": null,
+         "12": "2",
+         "13": null,
+         "14": null,
+         "15": null,
+         "16": null
+      }
+   },
+   "2": {
+      "name": "Dr. Valsan",
+      "slots": {
+         "9": null,
+         "10": null,
+         "11": null,
+         "12": null,
+         "13": null,
+         "14": null,
+         "15": null,
+         "16": null
+      }
+   },
+   "3": {
+      "name": "Dr. Arun",
+      "speciality": "Cardiology",
+      "slots": {
+         "9": null,
          "10": null,
          "11": null,
          "12": null,

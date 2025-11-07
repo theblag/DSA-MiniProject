@@ -328,6 +328,7 @@ class PatientCreate(BaseModel):
 
 class DoctorCreate(BaseModel):
     name: str
+    speciality: str
     start_time: int = Field(..., ge=0, le=23)
     end_time: int = Field(..., ge=0, le=23)
 
@@ -351,6 +352,7 @@ class PatientRecord(BaseModel):
 class DoctorRecord(BaseModel):
     doctor_id: str
     name: str
+    speciality: str
     slots: Dict[str, Optional[str]]
 
 class AppointmentResponse(BaseModel):
@@ -715,6 +717,7 @@ def get_all_doctors():
         result.append(DoctorRecord(
             doctor_id=did,
             name=ddata['name'],
+            speciality=ddata.get('speciality', 'General'),
             slots=ddata['slots']
         ))
     return result
@@ -733,6 +736,7 @@ def add_doctor(doctor: DoctorCreate):
     
     doctors_data[doctor_id] = {
         "name": doctor.name,
+        "speciality": doctor.speciality,
         "slots": {str(t): None for t in range(doctor.start_time, doctor.end_time)}
     }
     
@@ -759,6 +763,7 @@ def get_doctor_schedule(doctor_id: str):
     return {
         "doctor_id": doctor_id,
         "name": doctor['name'],
+        "speciality": doctor.get('speciality', 'General'),
         "available_slots": sorted(available_slots),
         "booked_slots": booked_slots,
         "total_slots": len(doctor['slots'])

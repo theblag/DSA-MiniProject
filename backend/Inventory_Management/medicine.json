@@ -1,22 +1,117 @@
 {
     "Paracetamol": {
-        "stock": 1,
-        "serials": {}
+        "stock": 3,
+        "serials": {
+            "P001": {
+                "expiry": "2026-03-15",
+                "price": 50.0
+            },
+            "P002": {
+                "expiry": "2026-05-20",
+                "price": 50.0
+            },
+            "P004": {
+                "expiry": "2026-08-25",
+                "price": 50.0
+            }
+        }
     },
     "Amoxicillin": {
         "stock": 5,
-        "serials": {}
+        "serials": {
+            "A001": {
+                "expiry": "2026-02-18",
+                "price": 120.0
+            },
+            "A002": {
+                "expiry": "2026-04-22",
+                "price": 120.0
+            },
+            "A003": {
+                "expiry": "2025-11-15",
+                "price": 115.0
+            },
+            "A004": {
+                "expiry": "2026-06-30",
+                "price": 125.0
+            },
+            "A005": {
+                "expiry": "2026-03-10",
+                "price": 120.0
+            }
+        }
     },
     "Ibuprofen": {
-        "stock": 2,
-        "serials": {}
+        "stock": 4,
+        "serials": {
+            "I001": {
+                "expiry": "2026-07-12",
+                "price": 75.0
+            },
+            "I002": {
+                "expiry": "2026-09-05",
+                "price": 75.0
+            },
+            "I003": {
+                "expiry": "2025-12-20",
+                "price": 70.0
+            },
+            "I004": {
+                "expiry": "2026-04-18",
+                "price": 75.0
+            }
+        }
     },
     "Cetirizine": {
-        "stock": 1,
-        "serials": {}
+        "stock": 3,
+        "serials": {
+            "C001": {
+                "expiry": "2026-05-08",
+                "price": 30.0
+            },
+            "C002": {
+                "expiry": "2026-10-15",
+                "price": 30.0
+            },
+            "C003": {
+                "expiry": "2026-02-28",
+                "price": 28.0
+            }
+        }
     },
     "Deslor": {
-        "stock": 0,
-        "serials": {}
+        "stock": 3,
+        "serials": {
+            "D001": {
+                "expiry": "2026-03-20",
+                "price": 85.0
+            },
+            "D002": {
+                "expiry": "2026-06-12",
+                "price": 85.0
+            },
+            "D003": {
+                "expiry": "2025-11-30",
+                "price": 80.0
+            }
+        }
+    },
+    "Insulin": {
+        "stock": 1,
+        "serials": {
+            "8": {
+                "expiry": "2027-10-07",
+                "price": 300.0
+            }
+        }
+    },
+    "Emeset": {
+        "stock": 1,
+        "serials": {
+            "9": {
+                "expiry": "2026-07-07",
+                "price": 500.0
+            }
+        }
     }
 }

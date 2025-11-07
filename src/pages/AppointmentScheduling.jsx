@@ -26,6 +26,7 @@ const AppointmentScheduling = () => {
   // New doctor form
   const [newDoctor, setNewDoctor] = useState({
     name: '',
+    speciality: 'General Medicine',
     start_time: 9,
     end_time: 17
   });
@@ -107,7 +108,7 @@ const AppointmentScheduling = () => {
       if (response.ok) {
         showToast('Doctor added successfully!');
         setShowAddDoctor(false);
-        setNewDoctor({ name: '', start_time: 9, end_time: 17 });
+        setNewDoctor({ name: '', speciality: 'General Medicine', start_time: 9, end_time: 17 });
         fetchDoctors();
       }
     } catch (error) {
@@ -312,7 +313,7 @@ const AppointmentScheduling = () => {
                       <div className="text-4xl">👨‍⚕️</div>
                       <div className="flex-1">
                         <h3 className="font-semibold text-textPrimary">{doctor.name}</h3>
-                        <p className="text-sm text-textSecondary">{getRandomSpecialty()}</p>
+                        <p className="text-sm text-textSecondary">{doctor.speciality || 'General Medicine'}</p>
                         <span className="text-xs px-2 py-1 rounded-full mt-1 inline-block bg-success text-white">
                           Available
                         </span>
@@ -460,6 +461,7 @@ const AppointmentScheduling = () => {
                     <h3 className="font-semibold text-textPrimary mb-2">Booking Summary:</h3>
                     <div className="space-y-1 text-textSecondary">
                       <p>Doctor: <span className="font-semibold text-textPrimary">{selectedDoctor.name}</span></p>
+                      <p className="text-xs">Speciality: <span className="font-semibold">{selectedDoctor.speciality || 'General Medicine'}</span></p>
                       <p>Patient: <span className="font-semibold text-textPrimary">{selectedPatient.name}</span></p>
                       <p>Time: <span className="font-semibold text-textPrimary">{selectedTime}:00</span></p>
                     </div>
@@ -516,6 +518,7 @@ const AppointmentScheduling = () => {
                 <div className="mt-4 p-4 bg-purple-50 rounded-lg">
                   <p className="text-sm text-textSecondary">Selected Doctor</p>
                   <p className="text-lg font-semibold text-purple-600">{selectedDoctor.name}</p>
+                  <p className="text-xs text-textSecondary">{selectedDoctor.speciality || 'General Medicine'}</p>
                 </div>
               )}
               
@@ -556,6 +559,26 @@ const AppointmentScheduling = () => {
                   className="w-full px-4 py-2 rounded-lg border-2 border-gray-200 focus:border-primary"
                   required
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-textPrimary mb-2">Speciality</label>
+                <select
+                  value={newDoctor.speciality}
+                  onChange={(e) => setNewDoctor({...newDoctor, speciality: e.target.value})}
+                  className="w-full px-4 py-2 rounded-lg border-2 border-gray-200 focus:border-primary"
+                  required
+                >
+                  <option value="General Medicine">General Medicine</option>
+                  <option value="Cardiology">Cardiology</option>
+                  <option value="Orthopedics">Orthopedics</option>
+                  <option value="Pediatrics">Pediatrics</option>
+                  <option value="Neurology">Neurology</option>
+                  <option value="Dermatology">Dermatology</option>
+                  <option value="ENT">ENT</option>
+                  <option value="Ophthalmology">Ophthalmology</option>
+                  <option value="Gynecology">Gynecology</option>
+                  <option value="Psychiatry">Psychiatry</option>
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-textPrimary mb-2">Start Time (Hour)</label>
@@ -727,7 +750,8 @@ const AppointmentScheduling = () => {
             className="bg-white rounded-xl p-6 max-w-3xl w-full max-h-[80vh] overflow-y-auto"
           >
             <h2 className="text-2xl font-bold text-textPrimary mb-2">🗓️ Doctor Schedule</h2>
-            <p className="text-lg text-textSecondary mb-4">Dr. {selectedDoctor.name}</p>
+            <p className="text-lg text-textSecondary mb-1">Dr. {selectedDoctor.name}</p>
+            <p className="text-sm text-textSecondary mb-4">{selectedDoctor.speciality || 'General Medicine'}</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Available Slots */}
@@ -889,7 +913,8 @@ const AppointmentScheduling = () => {
                             </div>
                             <div>
                               <h3 className="font-semibold text-textPrimary text-lg">{doctor.name}</h3>
-                              <p className="text-sm text-textSecondary">Doctor ID: {doctor.doctor_id}</p>
+                              <p className="text-sm text-textSecondary">{doctor.speciality || 'General Medicine'}</p>
+                              <p className="text-xs text-textSecondary">Doctor ID: {doctor.doctor_id}</p>
                             </div>
                           </div>
                           <div className="grid grid-cols-3 gap-2 text-sm">

@@ -24,14 +24,20 @@
                 "serial": "1",
                 "price": 25,
                 "date": "2025-09-29 18:24:18"
+            },
+            {
+                "medicine": "Paracetamol",
+                "serial": "P003",
+                "price": 45.0,
+                "date": "2025-11-07 14:22:46"
             }
         ],
         "frequency": {
-            "Paracetamol": 2,
+            "Paracetamol": 3,
             "Ibuprofen": 1,
             "Amoxicillin": 1
         },
-        "total_price": 68
+        "total_price": 113.0
     },
     "Bob": {
         "purchases": [
@@ -82,12 +88,19 @@
                 "serial": "6",
                 "price": 560.0,
                 "date": "2025-10-21 22:35:34"
+            },
+            {
+                "medicine": "Insulin",
+                "serial": "8",
+                "price": 300.0,
+                "date": "2025-11-07 13:46:10"
             }
         ],
         "frequency": {
-            "Albentizole": 1
+            "Albentizole": 1,
+            "Insulin": 1
         },
-        "total_price": 560.0
+        "total_price": 860.0
     },
     "A": {
         "purchases": [
@@ -102,5 +115,19 @@
             "Deslor": 1
         },
         "total_price": 10.0
+    },
+    "Smith": {
+        "purchases": [
+            {
+                "medicine": "Paracetamol",
+                "serial": "P005",
+                "price": 50.0,
+                "date": "2025-11-07 14:23:13"
+            }
+        ],
+        "frequency": {
+            "Paracetamol": 1
+        },
+        "total_price": 50.0
     }
 }

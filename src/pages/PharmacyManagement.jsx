@@ -28,6 +28,7 @@ const PharmacyManagement = () => {
     serial: ''
   });
   const [searchName, setSearchName] = useState('');
+  const [searchResult, setSearchResult] = useState(null);
   const [billingForm, setBillingForm] = useState({
     patient_name: '',
     medicine_name: ''
@@ -41,13 +42,19 @@ const PharmacyManagement = () => {
       const data = await response.json();
       if (response.ok) {
         // Backend returns array directly, not wrapped in object
-        setMedicines(Array.isArray(data) ? data : []);
+        // Filter out any null/undefined values and ensure valid structure
+        const validMedicines = Array.isArray(data) 
+          ? data.filter(med => med && med.name && typeof med.stock === 'number')
+          : [];
+        setMedicines(validMedicines);
       } else {
         toast.error(data.detail || 'Failed to fetch medicines');
+        setMedicines([]); // Set empty array on error
       }
     } catch (error) {
       toast.error('Error connecting to server');
       console.error('Error fetching medicines:', error);
+      setMedicines([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -88,6 +95,12 @@ const PharmacyManagement = () => {
       });
     } catch (error) {
       console.error('Error fetching analytics:', error);
+      // Set null values on error to prevent crashes
+      setAnalytics({
+        mostDemanded: null,
+        lowestStock: null,
+        nearestExpiry: null
+      });
     }
   };
 
@@ -159,14 +172,17 @@ const PharmacyManagement = () => {
       const response = await fetch(`${API_BASE_URL}/api/pharmacy/medicines/${searchName}`);
       const data = await response.json();
       if (response.ok) {
-        setMedicines([data.medicine]);
+        setSearchResult(data.medicine);
+        setActiveModal(null); // Close the modal
         toast.success(`Found medicine: ${searchName}`);
       } else {
         toast.error(data.detail || 'Medicine not found');
+        setSearchResult(null);
       }
     } catch (error) {
       toast.error('Error connecting to server');
       console.error('Error searching medicine:', error);
+      setSearchResult(null);
     } finally {
       setLoading(false);
     }
@@ -279,13 +295,13 @@ const PharmacyManagement = () => {
             <span className="font-semibold text-textPrimary text-sm">Remove Serial</span>
           </button>
           
-          <button
+          {/* <button
             onClick={() => setActiveModal('search')}
             className="bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition border-l-4 border-blue-500 flex flex-col items-center gap-2"
           >
             <Search className="w-6 h-6 text-blue-500" />
             <span className="font-semibold text-textPrimary text-sm">Search Medicine</span>
-          </button>
+          </button> */}
           
           <button
             onClick={fetchMedicines}
@@ -378,6 +394,103 @@ const PharmacyManagement = () => {
           </div>
         </motion.div>
 
+        {/* Search Result Display */}
+        {searchResult && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-xl shadow-xl p-6 mb-8 border-2 border-blue-300"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-textPrimary flex items-center gap-2">
+                🔍 Search Results
+              </h2>
+              <button
+                onClick={() => {
+                  setSearchResult(null);
+                  setSearchName('');
+                  fetchMedicines();
+                }}
+                className="text-textSecondary hover:text-textPrimary flex items-center gap-1 bg-white px-3 py-1 rounded-lg shadow"
+              >
+                <X className="w-4 h-4" />
+                <span className="text-sm">Clear & Show All</span>
+              </button>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              {/* Medicine Header */}
+              <div className="border-b pb-4 mb-4">
+                <h3 className="text-3xl font-bold text-textPrimary mb-2">{searchResult.name}</h3>
+                <div className="flex gap-4 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <Package className="w-5 h-5 text-blue-500" />
+                    <span className="text-textSecondary">Stock:</span>
+                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStockBadge(searchResult.stock).color}`}>
+                      {searchResult.stock} units
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-green-500" />
+                    <span className="text-textSecondary">Total Sold:</span>
+                    <span className="text-textPrimary font-bold">{searchResult.sold} units</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Serials Section */}
+              {searchResult.serials && searchResult.serials.length > 0 ? (
+                <div>
+                  <h4 className="text-xl font-bold text-textPrimary mb-4 flex items-center gap-2">
+                    📦 Available Serials ({searchResult.serials.length})
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {searchResult.serials.map((serial, idx) => {
+                      const expiryStatus = getExpiryStatus(serial.expiry);
+                      return (
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: idx * 0.05 }}
+                          className="bg-gradient-to-br from-white to-gray-50 rounded-lg p-4 shadow-md border-2 border-gray-200 hover:border-blue-300 transition-all"
+                        >
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <p className="text-xs text-textSecondary mb-1">Serial Number</p>
+                              <p className="font-bold text-lg text-textPrimary">{serial.serial}</p>
+                            </div>
+                            <span className={`text-xs px-2 py-1 rounded-full font-semibold ${expiryStatus.color}`}>
+                              {expiryStatus.label}
+                            </span>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-textSecondary">Price:</span>
+                              <span className="text-lg font-bold text-success">₹{serial.price}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-textSecondary">Expiry:</span>
+                              <span className="text-sm font-semibold text-textPrimary">{serial.expiry}</span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                    <p className="text-yellow-700 font-semibold">No serials available for this medicine</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+
         {/* Medicine Inventory Table */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -405,12 +518,12 @@ const PharmacyManagement = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {medicines.map((medicine, index) => {
-                    const stockBadge = getStockBadge(medicine.stock);
+                  {medicines.filter(medicine => medicine && medicine.name).map((medicine, index) => {
+                    const stockBadge = getStockBadge(medicine.stock || 0);
                     return (
                       <tr key={index} className="border-b hover:bg-gray-50">
                         <td className="px-4 py-3 font-semibold text-textPrimary">{medicine.name}</td>
-                        <td className="px-4 py-3 text-textPrimary">{medicine.stock} units</td>
+                        <td className="px-4 py-3 text-textPrimary">{medicine.stock || 0} units</td>
                         <td className="px-4 py-3">
                           <span className={`${stockBadge.color} px-3 py-1 rounded-full text-xs font-semibold`}>
                             {stockBadge.label}
@@ -556,7 +669,10 @@ const PharmacyManagement = () => {
             >
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-2xl font-bold text-textPrimary">Search Medicine</h3>
-                <button onClick={() => setActiveModal(null)} className="text-textSecondary hover:text-textPrimary">
+                <button onClick={() => {
+                  setActiveModal(null);
+                  setSearchName('');
+                }} className="text-textSecondary hover:text-textPrimary">
                   <X className="w-6 h-6" />
                 </button>
               </div>
